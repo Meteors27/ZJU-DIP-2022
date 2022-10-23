@@ -1,6 +1,7 @@
 #include "bmp.h"
 #include <iostream>
 #include <cstdio>
+#define SUM (InfoHeader.biHeight*InfoHeader.biWidth)
 using namespace std;
 
 void BMP::imgread(char *imgpath) {
@@ -11,36 +12,22 @@ void BMP::imgread(char *imgpath) {
         return;
     }
     /* Read bitmap file header */
-    fread(FileHeader.bfType, 1, 2, fp);
+    fread(&FileHeader, sizeof FileHeader, 1, fp);
     if(FileHeader.bfType[0] != 'B' || FileHeader.bfType[1] != 'M') {
         cerr << "File header incorrect. It must be a bmp file. " << endl;
         return;
     }
-    fread(&FileHeader.bfSize, 1, 4, fp);
-    fread(&FileHeader.bfReserved1, 1, 2, fp);
-    fread(&FileHeader.bfReserved2, 1, 2, fp);
     if(FileHeader.bfReserved1 || FileHeader.bfReserved2) {
         cerr << "bfReserved value is not zero." << endl;
         return;
     }
-    fread(&FileHeader.bfOffBits, 1, 4, fp);
     /* Read bitmap info header */
-    fread(&InfoHeader.biSize, 1, 4, fp);
-    fread(&InfoHeader.biWidth, 1, 4, fp);
-    fread(&InfoHeader.biHeight, 1, 4, fp);
-    fread(&InfoHeader.biPlanes, 1, 2, fp);
-    fread(&InfoHeader.biBitCount, 1, 2, fp);
-    fread(&InfoHeader.biCompression, 1, 4, fp);
+    fread(&InfoHeader, sizeof InfoHeader, 1, fp);
     if(InfoHeader.biCompression != 0) {
         cerr << "The bmp file is compressed, which cannot be dealt with currently." << endl;
         return;
     }
-    fread(&InfoHeader.biSizeImage, 1, 4, fp);
-    fread(&InfoHeader.biXPelsPerMeter, 1, 4, fp);
-    fread(&InfoHeader.biYPelsPerMeter, 1, 4, fp);
-    fread(&InfoHeader.biClrUsed, 1, 4, fp);
-    fread(&InfoHeader.biClrImportant, 1, 4, fp);
-    cout << "[image info] " << "Width: " << InfoHeader.biWidth << " pixels    " << "Height: " << InfoHeader.biHeight << " pixels    " << "BitCount: " << InfoHeader.biBitCount << " bits" << endl;
+    cout << "[image] " << "Width: " << InfoHeader.biWidth << " pixels    " << "Height: " << InfoHeader.biHeight << " pixels    " << "BitCount: " << InfoHeader.biBitCount << " bits" << endl;
     height = InfoHeader.biHeight;
     width = InfoHeader.biWidth;
     /* dealing with some exceptions */
@@ -58,32 +45,20 @@ void BMP::imgread(char *imgpath) {
         return;
     }
     int w, h;
-    // cout << "current fp pointer: " << ftell(fp) << endl;
     for(h = 0; h < InfoHeader.biHeight; h++) {
         img[h] = new RGBQUAD [InfoHeader.biWidth]; // times 4?
     }
     for(h = 0; h < InfoHeader.biHeight; h++) {
         for(w = 0; w < InfoHeader.biWidth; w++) {
-            fread(&img[h][w].rgbBlue,1,1,fp);
-            fread(&img[h][w].rgbGreen,1,1,fp);
-            fread(&img[h][w].rgbRed,1,1,fp);
+            fread(&img[h][w],InfoHeader.biBitCount/8,1,fp);
         }
         int gap = 0;
-        while((w*3+gap)%4) {
+        while((w*InfoHeader.biBitCount/8+gap)%4) {
             char c;
             fread(&c, 1, 1, fp);
             gap++;
         }
     }
-    // cout << "current fp pointer: " << ftell(fp) << endl;
-    /*
-    if(ftell(fp) == FileHeader.bfSize) {
-        cout << "[log] " << "read img file successfully! " <<endl;
-    }
-    else {
-        cerr << "ended when not entirely read. " << endl;
-    }
-     */
     cout << "[log] " << "read img file successfully! " <<endl;
     fclose(fp);
 }
@@ -95,33 +70,17 @@ void BMP::imgwrite(char* imgpath) {
         return;
     }
     cout << "[log] " << "writing img file: " << imgpath << endl;
-    fwrite(FileHeader.bfType, 1, 2, fp);
-    fwrite(&FileHeader.bfSize, 1, 4, fp);
-    fwrite(&FileHeader.bfReserved1, 1, 2, fp);
-    fwrite(&FileHeader.bfReserved2, 1, 2, fp);
-    fwrite(&FileHeader.bfOffBits, 1, 4, fp);
-
-    fwrite(&InfoHeader.biSize, 1, 4, fp);
-    fwrite(&InfoHeader.biWidth, 1, 4, fp);
-    fwrite(&InfoHeader.biHeight, 1, 4, fp);
-    fwrite(&InfoHeader.biPlanes, 1, 2, fp);
-    fwrite(&InfoHeader.biBitCount, 1, 2, fp);
-    fwrite(&InfoHeader.biCompression, 1, 4, fp);
-    fwrite(&InfoHeader.biSizeImage, 1, 4, fp);
-    fwrite(&InfoHeader.biXPelsPerMeter, 1, 4, fp);
-    fwrite(&InfoHeader.biYPelsPerMeter, 1, 4, fp);
-    fwrite(&InfoHeader.biClrUsed, 1, 4, fp);
-    fwrite(&InfoHeader.biClrImportant, 1, 4, fp);
-
+    cout << "[image] " << "Width: " << InfoHeader.biWidth << " pixels    " << "Height: " << InfoHeader.biHeight << " pixels    " << "BitCount: " << InfoHeader.biBitCount << " bits" << endl;
+    fwrite(&FileHeader, sizeof FileHeader, 1, fp);
+    fwrite(&InfoHeader, sizeof InfoHeader, 1, fp);
+    fwrite(Palette, FileHeader.bfOffBits - sizeof(BitMapFileHeader) - sizeof(BitMapInfoHeader), 1, fp);
     int w, h;
     for(h = 0; h < InfoHeader.biHeight; h++) {
         for(w = 0; w < InfoHeader.biWidth; w++) {
-            fwrite(&img[h][w].rgbBlue,1,1,fp);
-            fwrite(&img[h][w].rgbGreen,1,1,fp);
-            fwrite(&img[h][w].rgbRed,1,1,fp);
+            fwrite(&img[h][w],InfoHeader.biBitCount/8,1,fp);
         }
         int gap = 0;
-        while((w*3+gap)% 4) {
+        while((w*InfoHeader.biBitCount/8+gap)% 4) {
             char c = '\0';
             fwrite(&c,1,1,fp);
             gap++;
@@ -131,11 +90,83 @@ void BMP::imgwrite(char* imgpath) {
     cout << "[log] " << "write img file successfully!" << endl;
 }
 
-void BMP::renderbypixel(RGBQUAD (*callback)(RGBQUAD)) {
-    int h,w;
+void BMP::greyscale() {
+    int w, h;
     for(h = 0; h < InfoHeader.biHeight; h++) {
         for(w = 0; w < InfoHeader.biWidth; w++) {
-            img[h][w] = callback(img[h][w]);
+            RGBQUAD *pixel = &img[h][w];
+            auto [y, u, v] = RGB2YUV(pixel->rgbRed, pixel->rgbGreen, pixel->rgbBlue);
+            pixel->rgbBlue = pixel->rgbGreen = pixel->rgbRed = (unsigned char) y;
         }
     }
 }
+
+void BMP::binarize(unsigned char threshold) {
+    int w, h;
+    for(h = 0; h < InfoHeader.biHeight; h++) {
+        for(w = 0; w < InfoHeader.biWidth; w++) {
+            RGBQUAD *pixel = &img[h][w];
+            if (pixel->rgbRed < threshold) {
+                pixel->rgbBlue = pixel->rgbGreen = pixel->rgbRed = 0;
+            } else {
+                pixel->rgbBlue = pixel->rgbGreen = pixel->rgbRed = 255;
+            }
+        }
+    }
+}
+
+std::tuple<double, double, double> BMP::RGB2YUV(double r, double g, double b) {
+    double y,u,v;
+    y = 0.299*r + 0.587*g + 0.114*b;
+    u = -0.147*r - 0.289*g + 0.436*b;
+    v = 0.615*r - 0.515*g - 0.100*b;
+    return {y, u, v};
+}
+
+unsigned char BMP::ostu() {
+    cout << "[log] running ostu algorithm... " << endl;
+    unsigned char *gamma = new unsigned char [SUM];
+    unsigned char bestThreshold = 0, threshold;
+    float max_variance = 0;
+    int i = 0;
+    for (int h = 0; h < InfoHeader.biHeight; h++) {
+        for (int w = 0; w < InfoHeader.biWidth; w++) {
+            gamma[i++] = img[h][w].rgbRed;
+        }
+    }
+    unsigned char min_gamma = 255, max_gamma = 0;
+    for (i = 0; i < SUM; i++) {
+        min_gamma = min(min_gamma, gamma[i]);
+        max_gamma = max(max_gamma, gamma[i]);
+    }
+    for (threshold = min_gamma; threshold < max_gamma; threshold++) {
+        // cout << "[ostu] threshold = " << (int)threshold << endl;
+        int n1 = 0, n2 = 0;
+        long long sum1 = 0, sum2 = 0;
+        for (i = 0; i < SUM; i++) {
+            if (gamma[i] < threshold) {
+                sum1 += gamma[i];
+                n1++;
+            } else {
+                sum2 += gamma[i];
+                n2++;
+            }
+        }
+        if (n1 == 0 || n2 == 0) continue;
+        float w1 = (float)n1 / SUM, w2 = 1.00 - w1;
+        float u1 = (float)sum1 / n1, u2 = (float)sum2 / n2;
+        float variance = w1 * w2 * (u1 - u2) * (u1 - u2);
+        //  cout << "variance: " << variance << endl;
+        if (variance > max_variance) {
+            bestThreshold = threshold;
+            max_variance = variance;
+        }
+    }
+    cout << "[ostu] best threshold: " << (int)bestThreshold << endl;
+    return bestThreshold;
+}
+
+void BMP::binarize() {
+    binarize(ostu());
+}
+
