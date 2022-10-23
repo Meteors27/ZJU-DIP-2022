@@ -170,3 +170,70 @@ void BMP::binarize() {
     binarize(ostu());
 }
 
+void BMP::mask(bool choice) {
+    const int H = InfoHeader.biHeight, W = InfoHeader.biWidth;
+    bool mask[3][3] = {true,true,true,true,true,true,true,true,true};
+    bool gamma[H][W];
+    bool erosion[H][W];
+
+    for (int h = 0; h < H; h++) {
+        for (int w = 0; w < W; w++) {
+            gamma[h][w] = (img[h][w].rgbRed != 0);
+            if(!choice) gamma[h][w] = !gamma[h][w];
+        }
+    }
+    for (int h = 0; h < H; h++) {
+        for (int w = 0; w < W; w++) {
+            erosion[h][w] = (gamma[max(h-1,0)][max(w-1,0)] || !mask[0][0]) &&
+                    (gamma[max(h-1,0)][w] || !mask[0][1]) &&
+                    (gamma[max(h-1,0)][min(w+1,W)] || !mask[0][2]) &&
+                    (gamma[h][max(w-1,0)] || !mask[1][0]) &&
+                    (gamma[h][w] || !mask[1][1]) &&
+                    (gamma[h][min(w+1,W)] || !mask[2][2]) &&
+                    (gamma[min(h+1,H)][max(w-1,0)] || !mask[2][0]) &&
+                    (gamma[min(h+1,H)][w] || !mask[2][1]) &&
+                    (gamma[min(h+1,H)][min(w+1,W)] || !mask[2][2]);
+        }
+    }
+    for (int h = 0; h < H; h++) {
+        for (int w = 0; w < W; w++) {
+            if (choice) {
+                img[h][w].rgbRed = img[h][w].rgbGreen = img[h][w].rgbBlue = erosion[h][w] ? 255 : 0;
+            }
+            else {
+                img[h][w].rgbRed = img[h][w].rgbGreen = img[h][w].rgbBlue = erosion[h][w] ? 0 : 255;
+            }
+
+        }
+    }
+}
+
+void BMP::erode(int times) {
+    for (int i = 0; i < times; i++) {
+        mask(true);
+    }
+}
+
+void BMP::dilate(int times) {
+    for (int i = 0; i < times; i++) {
+        mask(false);
+    }
+}
+
+void BMP::opening(int times) {
+    for (int i = 0; i < times; i++) {
+        erode(1);
+    }
+    for (int i = 0; i < times; i++) {
+        dilate(1);
+    }
+}
+
+void BMP::closing(int times) {
+    for (int i = 0; i < times; i++) {
+        dilate(1);
+    }
+    for (int i = 0; i < times; i++) {
+        erode(1);
+    }
+}

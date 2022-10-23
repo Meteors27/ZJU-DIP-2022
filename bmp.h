@@ -50,13 +50,17 @@ public:
     void greyscale();
     void binarize(unsigned char threshold);
     void binarize();
-
+    void erode(int times);
+    void dilate(int times);
+    void opening(int times);
+    void closing(int times);
 private:
     BitMapFileHeader FileHeader;
     BitMapInfoHeader InfoHeader;
     void *Palette;
     unsigned char ostu();
     static std::tuple<double, double, double> RGB2YUV(double r, double g, double b);
+    void mask(bool); // erosion和dilation的共有代码片段, true代表erosion, false代表dilation
 };
 
 #endif //DIP_BMP_H
