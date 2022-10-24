@@ -11,10 +11,13 @@ int main() {
     bmp.greyscale();
     bmp.binarize();
     bmp.imgwrite(binary);
-//    bmp.opening();
-//    bmp.closing();
-    for (int i = 0; i < 20; i ++) bmp.erode();
-    for (int i = 0; i < 20; i ++) bmp.dilate();
+    bmp.opening();
+    bmp.closing();
+    //for (int i = 0; i < 1; i ++) bmp.dilate();
+//    for (int i = 0; i < 10; i ++) bmp.erode();
+//    for (int i = 0; i < 11; i ++) bmp.dilate();
+//    for (int i = 0; i < 10; i ++) bmp.erode();
+//    for (int i = 0; i < 10; i ++) bmp.dilate();
     bmp.imgwrite(OpeningClosing);
     return 0;
 }

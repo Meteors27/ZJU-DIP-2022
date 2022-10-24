@@ -186,13 +186,13 @@ void BMP::mask(bool choice) {
         for (int w = 0; w < W; w++) {
             erosion[h][w] = (gamma[max(h-1,0)][max(w-1,0)] || !mask[0][0]) &&
                     (gamma[max(h-1,0)][w] || !mask[0][1]) &&
-                    (gamma[max(h-1,0)][min(w+1,W)] || !mask[0][2]) &&
+                    (gamma[max(h-1,0)][min(w+1,W-1)] || !mask[0][2]) &&
                     (gamma[h][max(w-1,0)] || !mask[1][0]) &&
                     (gamma[h][w] || !mask[1][1]) &&
-                    (gamma[h][min(w+1,W)] || !mask[2][2]) &&
-                    (gamma[min(h+1,H)][max(w-1,0)] || !mask[2][0]) &&
-                    (gamma[min(h+1,H)][w] || !mask[2][1]) &&
-                    (gamma[min(h+1,H)][min(w+1,W)] || !mask[2][2]);
+                    (gamma[h][min(w+1,W-1)] || !mask[1][2]) &&
+                    (gamma[min(h+1,H-1)][max(w-1,0)] || !mask[2][0]) &&
+                    (gamma[min(h+1,H-1)][w] || !mask[2][1]) &&
+                    (gamma[min(h+1,H-1)][min(w+1,W-1)] || !mask[2][2]);
         }
     }
     for (int h = 0; h < H; h++) {
