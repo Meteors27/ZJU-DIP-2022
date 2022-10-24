@@ -11,8 +11,10 @@ int main() {
     bmp.greyscale();
     bmp.binarize();
     bmp.imgwrite(binary);
-    bmp.opening(1);
-    bmp.closing(1);
+//    bmp.opening();
+//    bmp.closing();
+    for (int i = 0; i < 20; i ++) bmp.erode();
+    for (int i = 0; i < 20; i ++) bmp.dilate();
     bmp.imgwrite(OpeningClosing);
     return 0;
 }

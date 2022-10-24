@@ -50,10 +50,10 @@ public:
     void greyscale();
     void binarize(unsigned char threshold);
     void binarize();
-    void erode(int times);
-    void dilate(int times);
-    void opening(int times);
-    void closing(int times);
+    void erode();
+    void dilate();
+    void opening();
+    void closing();
 private:
     BitMapFileHeader FileHeader;
     BitMapInfoHeader InfoHeader;

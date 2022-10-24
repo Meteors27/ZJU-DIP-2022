@@ -208,32 +208,20 @@ void BMP::mask(bool choice) {
     }
 }
 
-void BMP::erode(int times) {
-    for (int i = 0; i < times; i++) {
-        mask(true);
-    }
+void BMP::erode() {
+    mask(true);
 }
 
-void BMP::dilate(int times) {
-    for (int i = 0; i < times; i++) {
-        mask(false);
-    }
+void BMP::dilate() {
+    mask(false);
 }
 
-void BMP::opening(int times) {
-    for (int i = 0; i < times; i++) {
-        erode(1);
-    }
-    for (int i = 0; i < times; i++) {
-        dilate(1);
-    }
+void BMP::opening() {
+    erode();
+    dilate();
 }
 
-void BMP::closing(int times) {
-    for (int i = 0; i < times; i++) {
-        dilate(1);
-    }
-    for (int i = 0; i < times; i++) {
-        erode(1);
-    }
+void BMP::closing() {
+    dilate();
+    erode();
 }
