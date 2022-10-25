@@ -260,9 +260,13 @@ void BMP::VisEnhance() {
     for(h = 0; h < InfoHeader.biHeight; h++) {
         for(w = 0; w < InfoHeader.biWidth; w++) {
             RGBQUAD *pixel = &img[h][w];
+            /* transform RGB to YUV */
             auto [y, u, v] = RGB2YUV(pixel->rgbRed, pixel->rgbGreen, pixel->rgbBlue);
+            /* rescale luminance Y with logarithmic operation */
             y = 255.00 * log(y/255.00 + 1.00) / log(maxLumi/255.00 + 1.00) ;
+            /* transforn YUV to RGB */
             auto [r, g, b] = YUV2RGB(y, u, v);
+            /* RGB params need to be rescaled because they may get out of range [0, 255] */
             pixel->rgbRed = rearrange(r);
             pixel->rgbBlue = rearrange(b);
             pixel->rgbGreen = rearrange(g);
