@@ -1,6 +1,7 @@
 #include "bmp.h"
 #include <iostream>
 #include <cstdio>
+#include <cmath>
 #define SUM (InfoHeader.biHeight*InfoHeader.biWidth)
 using namespace std;
 
@@ -90,7 +91,7 @@ void BMP::imgwrite(char* imgpath) {
     cout << "[log] " << "write img file successfully!" << endl;
 }
 
-void BMP::greyscale() {
+void BMP::greyscale() const {
     int w, h;
     for(h = 0; h < InfoHeader.biHeight; h++) {
         for(w = 0; w < InfoHeader.biWidth; w++) {
@@ -101,7 +102,7 @@ void BMP::greyscale() {
     }
 }
 
-void BMP::binarize(unsigned char threshold) {
+void BMP::binarize(unsigned char threshold) const {
     int w, h;
     for(h = 0; h < InfoHeader.biHeight; h++) {
         for(w = 0; w < InfoHeader.biWidth; w++) {
@@ -123,9 +124,9 @@ std::tuple<double, double, double> BMP::RGB2YUV(double r, double g, double b) {
     return {y, u, v};
 }
 
-unsigned char BMP::ostu() {
+unsigned char BMP::ostu() const {
     cout << "[log] running ostu algorithm... " << endl;
-    unsigned char *gamma = new unsigned char [SUM];
+    auto *gamma = new unsigned char [SUM];
     unsigned char bestThreshold = 0, threshold;
     float max_variance = 0;
     int i = 0;
@@ -170,7 +171,7 @@ void BMP::binarize() {
     binarize(ostu());
 }
 
-void BMP::mask(bool choice) {
+void BMP::mask(bool choice) const {
     const int H = InfoHeader.biHeight, W = InfoHeader.biWidth;
     bool mask[3][3] = {true,true,true,true,true,true,true,true,true};
     bool gamma[H][W];
@@ -224,4 +225,47 @@ void BMP::opening() {
 void BMP::closing() {
     dilate();
     erode();
+}
+
+std::tuple<double, double, double> BMP::YUV2RGB(double y, double u, double v) {
+    double r,g,b;
+    r = 1.000*y - 0.000*u + 1.140*v;
+    g = 1.000*y - 0.395*u - 0.580*v;
+    b = 1.000*y + 2.036*u + 0.000*v;
+    return {r, g, b};
+}
+
+double BMP::rearrange(double x) {
+    if (x > 255) {
+        return 255.0;
+    }
+    else if (x < 0) {
+        return 0.0;
+    }
+    return x;
+}
+
+void BMP::VisEnhance() {
+    double maxLumi = 0.00;
+    int w, h;
+    /* find the maximal luminance in the picture */
+    for(h = 0; h < InfoHeader.biHeight; h++) {
+        for(w = 0; w < InfoHeader.biWidth; w++) {
+            RGBQUAD *pixel = &img[h][w];
+            auto [y, u, v] = RGB2YUV(pixel->rgbRed, pixel->rgbGreen, pixel->rgbBlue);
+            if (y > maxLumi) maxLumi = y;
+        }
+    }
+    /* logarithmic operation */
+    for(h = 0; h < InfoHeader.biHeight; h++) {
+        for(w = 0; w < InfoHeader.biWidth; w++) {
+            RGBQUAD *pixel = &img[h][w];
+            auto [y, u, v] = RGB2YUV(pixel->rgbRed, pixel->rgbGreen, pixel->rgbBlue);
+            y = 255.00 * log(y/255.00 + 1.00) / log(maxLumi/255.00 + 1.00) ;
+            auto [r, g, b] = YUV2RGB(y, u, v);
+            pixel->rgbRed = rearrange(r);
+            pixel->rgbBlue = rearrange(b);
+            pixel->rgbGreen = rearrange(g);
+        }
+    }
 }

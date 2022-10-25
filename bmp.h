@@ -38,6 +38,14 @@ typedef struct tagRGBQUAD
     unsigned char rgbReserved;// 保留字
 }RGBQUAD;
 #pragma pack()
+#pragma pack(1)
+typedef struct YUV
+{
+    unsigned char yuvY;   //该颜色的蓝色分量  (值范围为0-255)
+    unsigned char yuvU;  //该颜色的绿色分量  (值范围为0-255)
+    unsigned char yuvV;    //该颜色的红色分量  (值范围为0-255)
+}PixelYUV;
+#pragma pack()
 
 class BMP {
 public:
@@ -45,22 +53,26 @@ public:
     void imgread(char* imgpath);                            // 读取bmp文件
     void imgwrite(char* imgpath);                           // 写入bmp文件
     RGBQUAD **img;                                          // 存储图像数据
+    PixelYUV **imgYUV;
     unsigned int height;                                    // 图像的高
     unsigned int width;                                     // 图像的宽
-    void greyscale();
-    void binarize(unsigned char threshold);
+    void greyscale() const;
+    void binarize(unsigned char threshold) const;
     void binarize();
     void erode();
     void dilate();
     void opening();
     void closing();
+    void VisEnhance();
 private:
     BitMapFileHeader FileHeader;
     BitMapInfoHeader InfoHeader;
     void *Palette;
-    unsigned char ostu();
+    unsigned char ostu() const;
     static std::tuple<double, double, double> RGB2YUV(double r, double g, double b);
-    void mask(bool); // erosion和dilation的共有代码片段, true代表erosion, false代表dilation
+    static std::tuple<double, double, double> YUV2RGB(double y, double u, double v);
+    double rearrange(double x);
+    void mask(bool) const; // erosion和dilation的共有代码片段, true代表erosion, false代表dilation
 };
 
 #endif //DIP_BMP_H

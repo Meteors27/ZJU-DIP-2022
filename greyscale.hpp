@@ -35,7 +35,7 @@ void greyscale(BMP *bmp) {
         for (int w = 0; w < bmp->width; w++) {
             RGBQUAD *pixel = &bmp->img[h][w];
             auto [y,u,v] = RGB2YUV(pixel->rgbRed,pixel->rgbGreen,pixel->rgbBlue);
-            auto [r,g,b] = YUV2RGB(y,0,0);
+            auto [r,g,b] = YUV2RGB(y,u,v);
             pixel->rgbRed = (unsigned char)rearrange(r);
             pixel->rgbGreen = (unsigned char)rearrange(g);
             pixel->rgbBlue = (unsigned char)rearrange(b);
