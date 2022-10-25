@@ -1,9 +1,8 @@
 #ifndef DIP_BMP_H
 #define DIP_BMP_H
-#pragma pack(1)
-
 #include <tuple>
-
+typedef unsigned char Byte;
+#pragma pack(1)
 typedef struct TagBitMapFileHeader
 {
     unsigned char  bfType[2];     //文件格式（0-1字节）
@@ -53,25 +52,28 @@ public:
     void imgread(char* imgpath);                            // 读取bmp文件
     void imgwrite(char* imgpath);                           // 写入bmp文件
     RGBQUAD **img;                                          // 存储图像数据
-    PixelYUV **imgYUV;
+    // PixelYUV **imgYUV;
     unsigned int height;                                    // 图像的高
     unsigned int width;                                     // 图像的宽
     void greyscale() const;
-    void binarize(unsigned char threshold) const;
     void binarize();
     void erode();
     void dilate();
     void opening();
     void closing();
     void VisEnhance();
+    void HistogramEq(Byte **);
+    Byte **generateGreyscaleImage();
 private:
     BitMapFileHeader FileHeader;
     BitMapInfoHeader InfoHeader;
     void *Palette;
     unsigned char ostu() const;
+    void binarize(unsigned char threshold) const;
     static std::tuple<double, double, double> RGB2YUV(double r, double g, double b);
     static std::tuple<double, double, double> YUV2RGB(double y, double u, double v);
     double rearrange(double x);
+    double *histogram(Byte **);
     void mask(bool) const; // erosion和dilation的共有代码片段, true代表erosion, false代表dilation
 };
 

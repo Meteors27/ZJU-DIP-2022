@@ -4,10 +4,15 @@ using namespace std;
 
 int main() {
     BMP bmp;
-    char input[] = "../images/Matterhorn.bmp";
-    char output[] = "../images/test.bmp";
-    bmp.imgread(input);
+    char mountain[] = "../images/Matterhorn.bmp";
+    char enhance[] = "../images/VisEnhance.bmp";
+    char eq[] = "../images/equalization.bmp";
+    bmp.imgread(mountain);
     bmp.VisEnhance();
-    bmp.imgwrite(output);
+    bmp.imgwrite(enhance);
+    bmp.imgread(mountain);
+    auto greyImg = bmp.generateGreyscaleImage();
+    bmp.HistogramEq(greyImg);
+    bmp.imgwrite(eq);
     return 0;
 }

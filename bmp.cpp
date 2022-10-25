@@ -3,6 +3,8 @@
 #include <cstdio>
 #include <cmath>
 #define SUM (InfoHeader.biHeight*InfoHeader.biWidth)
+#define imgHeight (InfoHeader.biHeight)
+#define imgWidth (InfoHeader.biWidth)
 using namespace std;
 
 void BMP::imgread(char *imgpath) {
@@ -245,6 +247,9 @@ double BMP::rearrange(double x) {
     return x;
 }
 
+/* Apply visibility enhancement to the img.
+ * Directly change the img 2D array in the class.
+ */
 void BMP::VisEnhance() {
     double maxLumi = 0.00;
     int w, h;
@@ -272,4 +277,67 @@ void BMP::VisEnhance() {
             pixel->rgbGreen = rearrange(g);
         }
     }
+}
+
+/* Return a double array[256], which records the histogram of the param.
+ * Only support 8bit color */
+double *BMP::histogram(Byte **grey) {
+    cout << "[log] processing histogram..." << endl;
+    long count[256] = {0};
+    double res[256];
+    /* sum up every greyscale */
+    for(int h = 0; h < imgHeight; h++) {
+        for(int w = 0; w < imgWidth; w++) {
+            count[grey[h][w]]++;
+        }
+    }
+    /* calculate the frequency */
+    for (int i = 0; i < 256; i++) {
+        res[i] = (double)count[i] / (imgHeight*imgWidth);
+    }
+    cout << "[log] processing histogram done. " << endl;
+    return res;
+}
+
+/*  Apply histogram equalization to the input greyscale img.
+ *  Directly change the img 2D array in the class.
+ */
+void BMP::HistogramEq(Byte ** grey) {
+    double *raw = histogram(grey);
+    double p[256];
+    Byte eq[256];
+    int i;
+    p[0] = raw[0];
+    /* calculate the possibility array p[] */
+    for (i = 1; i < 256; i++) {
+        p[i] = p[i-1] + raw[i];
+    }
+    /* determine the mapping array eq[] */
+    for (i = 0; i < 256; i++) {
+        eq[i] = round(p[i] / (1.00/255.00));
+    }
+    /* write the greyscale data into the img rgb data */
+    for(int h = 0; h < imgHeight; h++) {
+        for(int w = 0; w < imgWidth; w++) {
+            RGBQUAD *pixel = &img[h][w];
+            pixel->rgbRed = pixel->rgbBlue = pixel->rgbGreen = eq[grey[h][w]];
+        }
+    }
+}
+
+Byte **BMP::generateGreyscaleImage() {
+    cout << "[log] generateGreyscaleImage..." << endl;
+    auto greyImg = new Byte* [imgHeight];
+    for (int i = 0; i < imgHeight; i++) {
+        greyImg[i] = new Byte [imgWidth];
+    }
+    for(int h = 0; h < imgHeight; h++) {
+        for(int w = 0; w < imgWidth; w++) {
+            RGBQUAD *pixel = &img[h][w];
+            auto [y, u, v] = RGB2YUV(pixel->rgbRed, pixel->rgbGreen, pixel->rgbBlue);
+            greyImg[h][w] = (unsigned char) y;
+        }
+    }
+    cout << "[log] generateGreyscaleImage done. " << endl;
+    return greyImg;
 }
