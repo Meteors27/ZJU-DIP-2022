@@ -254,16 +254,16 @@ void BMP::VisEnhance() {
     double maxLumi = 0.00;
     int w, h;
     /* find the maximal luminance in the picture */
-    for(h = 0; h < InfoHeader.biHeight; h++) {
-        for(w = 0; w < InfoHeader.biWidth; w++) {
+    for(h = 0; h < imgHeight; h++) {
+        for(w = 0; w < imgWidth; w++) {
             RGBQUAD *pixel = &img[h][w];
             auto [y, u, v] = RGB2YUV(pixel->rgbRed, pixel->rgbGreen, pixel->rgbBlue);
             if (y > maxLumi) maxLumi = y;
         }
     }
     /* logarithmic operation */
-    for(h = 0; h < InfoHeader.biHeight; h++) {
-        for(w = 0; w < InfoHeader.biWidth; w++) {
+    for(h = 0; h < imgHeight; h++) {
+        for(w = 0; w < imgWidth; w++) {
             RGBQUAD *pixel = &img[h][w];
             /* transform RGB to YUV */
             auto [y, u, v] = RGB2YUV(pixel->rgbRed, pixel->rgbGreen, pixel->rgbBlue);
@@ -325,6 +325,7 @@ void BMP::HistogramEq(Byte ** grey) {
     }
 }
 
+/* Return a greyscale image (2D array), calculated from the img data */
 Byte **BMP::generateGreyscaleImage() {
     cout << "[log] generateGreyscaleImage..." << endl;
     auto greyImg = new Byte* [imgHeight];
