@@ -17,6 +17,7 @@ int main() {
     bmp.imgread(mountain);
     bmp.greyscale();
     bmp.imgwrite("../images/greyscale_cliff.bmp");
+    
     return 0;
 }
 
