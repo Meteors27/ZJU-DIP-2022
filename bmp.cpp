@@ -85,6 +85,8 @@ void BMP::imgwrite(char* imgpath, PHOTO *photo) {
 PHOTO *BMP::imgnew(unsigned int width, unsigned int height) {
     /* File Header */
     auto photo = new PHOTO;
+    photo->width = width;
+    photo->height = height;
     photo->fileHeader = new BitMapFileHeader;
     photo->fileHeader->bfType[0] = 'B';
     photo->fileHeader->bfType[1] = 'M';

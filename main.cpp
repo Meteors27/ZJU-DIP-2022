@@ -1,14 +1,14 @@
 #include <iostream>
-#include "bmp.h"
+#include "Filtering.h"
 
 // using namespace std;
 
 int main() {
-    BMP bmp;
-    std::cout << "hello" << std::endl;
+    Filtering bmp;
     char mountain[] = "../images/Matterhorn.bmp";
     auto img = bmp.imgread(mountain);
-    bmp.imgwrite("../images/test.bmp", img);
+    auto img2 = bmp.meanFiltering(img, 11);
+    bmp.imgwrite("../images/test.bmp", img2);
 
     return 0;
 }

@@ -1,13 +1,14 @@
-//
-// Created by XMacBook on 2022/11/21.
-//
-
 #ifndef DIP_FILTERING_H
 #define DIP_FILTERING_H
 
+#include "bmp.h"
 
-class Filtering {
-
+class Filtering: public BMP{
+public:
+    PHOTO *meanFiltering(PHOTO* raw);
+    PHOTO *meanFiltering(PHOTO* raw, int size);
+protected:
+    RGBQUAD convolution(PHOTO *img, unsigned int h, unsigned w, int gap);
 };
 
 
