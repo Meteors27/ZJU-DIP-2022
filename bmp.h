@@ -49,7 +49,7 @@ public:
     static PHOTO *imgread(char* imgpath);
     static void imgwrite(char* imgpath, PHOTO *photo);
     static PHOTO *imgnew(unsigned int width, unsigned int height);
-private:
+protected:
     static std::tuple<double, double, double> RGB2YUV(double r, double g, double b);
     static std::tuple<double, double, double> YUV2RGB(double y, double u, double v);
     static double rearrange(double x);

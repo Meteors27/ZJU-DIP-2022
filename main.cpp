@@ -1,11 +1,12 @@
 #include <iostream>
-#include "Filtering.h"
+#include "Laplace.h"
 
 int main() {
-    Filtering bmp;
-    char mountain[] = "../images/Matterhorn.bmp";
+    Laplace bmp;
+    std:: cout << "hello" << std::endl;
+    char mountain[] = "../images/greyscale.bmp";
     auto img = bmp.imgread(mountain);
-    auto img2 = bmp.meanFiltering(img, 9);
-    bmp.imgwrite("../images/MeanFiltering.bmp", img2);
+    auto img2 = bmp.LaplacianEnhance(img);
+    bmp.imgwrite("../images/test.bmp", img2);
     return 0;
 }
