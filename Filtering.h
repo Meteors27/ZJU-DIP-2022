@@ -11,5 +11,4 @@ protected:
     RGBQUAD convolution(PHOTO *img, unsigned int h, unsigned w, int gap);
 };
 
-
 #endif //DIP_FILTERING_H
