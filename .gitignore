@@ -1,4 +1,4 @@
-#customized settings
+# Customized settings
 /images/
 *.zip
 /cmake-build-debug/
