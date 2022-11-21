@@ -3,4 +3,4 @@ project(DIP)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(DIP main.cpp bmp.cpp bmp.h greyscale.hpp binarize.hpp GeometricTransformation.cpp GeometricTransformation.h)
+add_executable(DIP main.cpp bmp.cpp bmp.h GeoTransform.cpp GeoTransform.h Filtering.cpp Filtering.h)

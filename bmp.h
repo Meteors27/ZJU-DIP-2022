@@ -1,7 +1,6 @@
 #ifndef DIP_BMP_H
 #define DIP_BMP_H
 #include <tuple>
-typedef unsigned char Byte;
 #pragma pack(1)
 typedef struct TagBitMapFileHeader
 {
@@ -37,44 +36,23 @@ typedef struct tagRGBQUAD
     unsigned char rgbReserved;// 保留字
 }RGBQUAD;
 #pragma pack()
-#pragma pack(1)
-typedef struct YUV
-{
-    unsigned char yuvY;   //该颜色的蓝色分量  (值范围为0-255)
-    unsigned char yuvU;  //该颜色的绿色分量  (值范围为0-255)
-    unsigned char yuvV;    //该颜色的红色分量  (值范围为0-255)
-}PixelYUV;
-#pragma pack()
-
+typedef struct PHOTO {
+    BitMapFileHeader *fileHeader;
+    BitMapInfoHeader *infoHeader;
+    /* only for 24 bits RGB bmp file without palette */
+    RGBQUAD **img;
+    unsigned int height;
+    unsigned int width;
+}PHOTO;
 class BMP {
 public:
-    BMP(){Palette= nullptr;}
-    void imgread(char* imgpath);                            // 读取bmp文件
-    void imgwrite(char* imgpath);                           // 写入bmp文件
-    RGBQUAD **img;                                          // 存储图像数据
-    // PixelYUV **imgYUV;
-    unsigned int height;                                    // 图像的高
-    unsigned int width;                                     // 图像的宽
-    void greyscale() const;
-    void binarize();
-    void erode();
-    void dilate();
-    void opening();
-    void closing();
-    void VisEnhance();
-    void HistogramEq(Byte **);
-    Byte **generateGreyscaleImage();
+    static PHOTO *imgread(char* imgpath);
+    static void imgwrite(char* imgpath, PHOTO *photo);
+    static PHOTO *imgnew(unsigned int width, unsigned int height);
 private:
-    BitMapFileHeader FileHeader;
-    BitMapInfoHeader InfoHeader;
-    void *Palette;
-    unsigned char ostu() const;
-    void binarize(unsigned char threshold) const;
     static std::tuple<double, double, double> RGB2YUV(double r, double g, double b);
     static std::tuple<double, double, double> YUV2RGB(double y, double u, double v);
-    double rearrange(double x);
-    double *histogram(Byte **);
-    void mask(bool) const; // erosion和dilation的共有代码片段, true代表erosion, false代表dilation
+    static double rearrange(double x);
 };
 
 #endif //DIP_BMP_H
