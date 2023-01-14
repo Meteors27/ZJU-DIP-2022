@@ -9,9 +9,9 @@ If you are not in this university, you can also find the code you need in the re
 </div>
 
 ## Notice
-If you want to copy `bmp` file reading & writing, please check Assignment6 rather than Assignment1. 
+If you want to copy `bmp` file reading & writing, please check [Assignment6](https://github.com/Meteors27/ZJU-DIP-2022/tree/master/Assignment6) rather than [Assignment1](https://github.com/Meteors27/ZJU-DIP-2022/tree/master/Assignment1). 
 
-The files `bmp.h` and `bmp.cpp` include the IO part. 
+The files `bmp.h` and `bmp.cpp` in every assignment folder include the reading and writing part of `bmp` files. 
 
 ## Included code in each assignment folder
 1. How to read and write `bmp` files
@@ -23,9 +23,9 @@ The files `bmp.h` and `bmp.cpp` include the IO part.
 
 ## Something you must know
 If you are learning DIP course in ZJU, you may probably find reading and writing `bmp` files the most challenging part. 
-However, due to the laziness of the author, the earlier assignment code has known bugs in the io of `bmp` files. (especially in Assignment1 and Assignment2)
+However, due to the laziness of the author, the earlier assignment code has known bugs in the io of `bmp` files. (especially in [Assignment1](https://github.com/Meteors27/ZJU-DIP-2022/tree/master/Assignment1) and [Assignment2](https://github.com/Meteors27/ZJU-DIP-2022/tree/master/Assignment2))
 
 As a result, please **avoid using them** as your code. They may bring about errors. 
 
-So if you want to check how to read and write a `bmp` file correctly, please check the latest version (Assignment6). 
-Actually in the later version including Assignment4~6, the author is pretty sure that `bmp.h` and `bmp.cpp` is so correct that it must meet the demand of DIP course in ZJU.
+So if you want to check how to read and write a `bmp` file correctly, please check the latest version ([Assignment6](https://github.com/Meteors27/ZJU-DIP-2022/tree/master/Assignment6)). 
+Actually as long as `bmp.h` and `bmp.cpp` are what not in the early assignments, the author is pretty sure that `bmp.h` and `bmp.cpp` is so correct that it must meet the demand of DIP course in ZJU.
