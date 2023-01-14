@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.22)
+project(Assignment1)
+set(CMAKE_CXX_STANDARD 14)
+include_directories(./src)
+add_subdirectory(src)
+add_executable(Assignment1 main.cpp)
+TARGET_LINK_LIBRARIES(Assignment1 src)
