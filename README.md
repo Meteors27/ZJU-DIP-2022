@@ -3,7 +3,10 @@
 ## Intro
 This repo is specially for Zhejiang University undergraduates in aid of their learning in Digital Image Processsing course.
 Relating to the Digital Image Processsing course in 2022, here are 6 folders including 6 assignments of this course in total. 
-If you are not in this university, you can also find the code you need in the realm of fundamental DIP. 
+If you are not in this university, you can also find the code you need in the realm of fundamental DIP.
+<div align=center>
+<img src='https://raw.github.com/Meteors27/ZJU-DIP-2022/master/cliff.bmp' width=25% height=25%><img src='https://raw.github.com/Meteors27/ZJU-DIP-2022/master/ProcessedImages/VisEnhance_cliff.bmp' width=25% height=25%><img src='https://raw.github.com/Meteors27/ZJU-DIP-2022/master/ProcessedImages/equalization_cliff.bmp' width=25% height=25%>
+</div>
 
 ## Notice
 If you want to copy `bmp` file reading & writing, please check Assignment6 rather than Assignment1. 
